@@ -11,21 +11,51 @@ Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings
 
 ## Basic Commands
 
-### Setting Up Your Users
+### Setting Up Your app locally
 
--   To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+- Browse to root folder of the project and simply run the below command for the local setup.
 
--   To create a **superuser account**, use this command:
+        $ docker-compose -f local.yml build
+        $ docker-compose -f local.yml up
 
-        $ python manage.py createsuperuser
+The above command will create the superuser with the credentials as below:
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+`employeeNumber: 1234, password:P@ssw0rd`
 
-### Type checks
+### API token JWT
 
-Running type checks with mypy:
+####Below API would get you the token to validate the user:
+- JSON Format
+``http://localhost:8000/api/token/``
 
-    $ mypy sary
+```{"employee_number": "1234", "password": "P@ssw0rd"}```
+
+### Create, Get, Delete Table
+
+####Below API would get you the token to validate the user:
+- JSON Format POST
+``http://localhost:8000/api/table/``
+
+```{"no_of_table": "2", "no_of_chair": "4"}```
+
+### Create, Get, Delete Reservation
+
+#### Below API would get you the token to validate the user:
+- JSON Format POST
+``http://localhost:8000/api/reservation/reserve_time/``
+
+```{"id": 1, "start_date": "2022-04-25 13:30:00", "end_date": "2022-04-25 14:00:00"}```
+
+#### API to get Reservation
+-  GET
+``http://localhost:8000/api/reservation/``
+
+
+#### API to get available slot time for the table when user enter requested seat by the customer
+- GET
+``http://localhost:8000/api/reservation/get_time_slot/?requested_seat=6``
+
+
 
 ### Test coverage
 
@@ -39,14 +69,3 @@ To run the tests, check your test coverage, and generate an HTML coverage report
 
     $ pytest
 
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
-
-## Deployment
-
-The following details how to deploy this application.
-
-### Docker
-
-See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
