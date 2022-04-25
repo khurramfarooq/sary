@@ -1,0 +1,51 @@
+version: '3'
+
+volumes:
+  sary_local_postgres_data: {}
+  sary_local_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: sary_local_django
+    container_name: sary_local_django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8000:8000"
+    command: bash -c "sleep 10 && python manage.py makemigrations && python manage.py migrate && python manage.py createsu && python manage.py runserver 0.0.0.0:8000"
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: sary_production_postgres
+    container_name: sary_local_postgres
+    volumes:
+      - sary_local_postgres_data:/var/lib/postgresql/data:Z
+#      - sary_local_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.local/.postgres
+
+  docs:
+    image: sary_local_docs
+    container_name: sary_local_docs
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - ./.envs/.local/.django
+    volumes:
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./sary:/app/sary:z
+    ports:
+      - "9000:9000"
+    command: /start-docs
